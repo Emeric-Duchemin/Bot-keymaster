@@ -1,17 +1,29 @@
 {
   "name": "keymaster_bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Who holds the keys ?",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+  "engines": {
+      "node": "8.10.0",
+      "npm": "3.10.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^2.0.4"
-  }
+  "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node index.js",
+      "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Emeric-Duchemin/Bot-keymaster.git"
+  },
+  "keywords": [
+    "heroku",
+    "discord.js"
+  ],
+  "author": "Emeric Duchemin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Emeric-Duchemin/Bot-keymaster/issues"
+  },
+  "homepage": "https://github.com/Emeric-Duchemin/Bot-keymaster#readme"
 }
