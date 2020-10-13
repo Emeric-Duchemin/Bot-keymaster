@@ -3,7 +3,7 @@ require("dotenv").config()
 const client = new Discord.Client();
 const userManager = client.users;
 let guild = undefined;
-let numberKey = 4;
+let numberKey = 3;
 let tabRol = [];
 
 client.on("ready", () => {
@@ -166,6 +166,11 @@ function get_action_from_message(message,index){
         return [0,ret]
     }
     if(msg.substring(index, index+11) === "initialize "){
+        rolAdmin = message.guild.roles.find(v=> v.name === "Admin");
+        if(!message.member.has(rolAdmin.id)){
+            return [0,"You are not an admin. Don't try to fool me deceitful gamer !"];
+        }
+        if(!message.member)
         index = index + 11;
         while(msg.charAt(index) == " "){
             index += 1;
@@ -190,7 +195,7 @@ function get_action_from_message(message,index){
         mess += "!km take \@pseudo \n\n";
         mess += "If you have given the key to someone, warn us :\n";
         mess += "!km give \@pseudo\n\n";
-        mess += "If you want to initialize the Keymasters :\n";
+        mess += "If you want to initialize the Keymasters (only once by server) :\n";
         mess += "!km initialize 'number_of_key'\n";
         mess += "Note that last command requires admin privilege";
         return [0,mess]
