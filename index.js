@@ -167,12 +167,11 @@ function get_action_from_message(message,index){
     }
     if(msg.substring(index, index+11) === "initialize "){
         rolAdmin = message.guild.roles.find(v=> v.name === "Admin");
-        if(!message.member.has(rolAdmin.id)){
+        if(!message.member.roles.has(rolAdmin.id)){
             return [0,"You are not an admin. Don't try to fool me deceitful gamer !"];
         }
-        if(!message.member)
         index = index + 11;
-        while(msg.charAt(index) == " "){
+        while(msg.charAt(index) === " "){
             index += 1;
         }
         let number = "";
