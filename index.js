@@ -187,7 +187,7 @@ function get_action_from_message(message,index){
     if(msg.substring(index, index+4) === "help"){
         mess = ""
         mess += "If you want to ping the venerable Keymasters, just ask :\n";
-        mess += "!km pingkm\n\n";
+        mess += "!km tag\n\n";
         mess += "If you want to see the revered Keymaster name, just ask : \n";
         mess += "!km list\n\n";
         mess += "If you have stolen the key from someone, tell us :\n";
