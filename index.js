@@ -8,12 +8,13 @@ let tabRol = [];
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  guild = client.guilds.get("");
+  //guild = client.guilds.get("");
 })
 
 client.on("message", (msg) => {
     guild = msg.guild;
     const toSend = treat_message(msg);
+    //msg.channel.send("Oui maître, pardon, désolé")
     if(toSend[0]){
         msg.channel.send(toSend[1]);
     }
@@ -34,10 +35,10 @@ function exchange_role(message,userToTake, userToReceive,firstMessage){
     }
     let rol = 0;
     for(let i=0; i<numberKey;i+=1){
-        rol = message.guild.roles.find(v=> v.name === "Keymaster"+String(i+1));
-        if(userToTake.roles.has(rol.id)){
-            userToTake.removeRole(rol);
-            userToReceive.addRole(rol);
+        rol = message.guild.roles.cache.find(v=> v.name === "Keymaster"+String(i+1));
+        if(userToTake.roles.cache.has(rol.id)){
+            userToTake.roles.remove(rol);
+            userToReceive.roles.add(rol);
             if(firstMessage){
                 return [true,"Well played, you have just stolen the key from "+myname
                 +".\n But remember, a great power comes with a great responsibility"];
@@ -97,7 +98,7 @@ function get_action_from_message(message,index){
         }
         const idUser = getUserId(idKeyReceiver);
         const me = message.member;
-        user = message.guild.members.get(idUser);
+        user = message.guild.members.cache.get(idUser);
         ret = exchange_role(message,user,me,true);
         if(!ret[0]){
             return[1,ret[1]];
@@ -118,7 +119,7 @@ function get_action_from_message(message,index){
         }
         const idUser = getUserId(idKeyReceiver);
         const me = message.member;
-        user = message.guild.members.get(idUser);
+        user = message.guild.members.cache.get(idUser);
         ret = exchange_role(message,me,user,false);
         if(!ret[0]){
             return[1,ret[1]];
@@ -135,14 +136,17 @@ function get_action_from_message(message,index){
         let rol = 0
         let ret = "The venerable Keymasters are :\n"
         for(let i=0; i<numberKey; i+= 1){
-            rol = message.guild.roles.find(v=> v.name === "Keymaster"+String(i+1));
-            user = message.guild.members.find(u => u.roles.has(rol.id));
+            //console.log(message.guild.members.cache);
+            rol = message.guild.roles.cache.find(v=> v.name === "Keymaster"+String(i+1));
+            //const members =  message.guild.members.cache.filter(member => member.roles.cache.find(role => role == rol)).map(member => member.user.tag);
+            const user = message.guild.members.cache.filter(member => member.roles.cache.find(role => role == rol));
+            //user = message.guild.members.cache.find(u => console.log(u.username))//u => u.roles.cache.has(rol.id));//u => console.log(u.roles))//
             if(user == null){
                 return [0,"Wait impatient, I'am answering your last demand. Keep calm and play video games !"];
             }
-            myName = user.nickname;
+            myName = user.map(user => user.nickname)[0];
             if(myName == null){
-                myName = user.user.username
+                myName = user.map(user => user.user.username);
             }
             ret += myName + "\n"
         }
@@ -156,18 +160,20 @@ function get_action_from_message(message,index){
         let rol = 0;
         let ret = "Hey come over here :\n"
         for(let i=0; i<numberKey; i+= 1){
-            rol = message.guild.roles.find(v=> v.name === "Keymaster"+String(i+1));
-            user = message.guild.members.find(u => u.roles.has(rol.id));
+            rol = message.guild.roles.cache.find(v=> v.name === "Keymaster"+String(i+1));
+            //const members =  message.guild.members.cache.filter(member => member.roles.cache.find(role => role == rol)).map(member => member.user.tag);
+            const user = message.guild.members.cache.filter(member => member.roles.cache.find(role => role == rol));
             if(user == null){
                 return [0,"Wait impatient, I'am answering your last demand. Keep calm and play video games !"];
             }
-            ret += "<@"+user.user.id+">" + "\n"
+            ret += "<@"+user.map(user => user.id)[0]+">" + "\n"
         }
         return [0,ret]
     }
     if(msg.substring(index, index+11) === "initialize "){
-        rolAdmin = message.guild.roles.find(v=> v.name === "Admin");
-        if(!message.member.roles.has(rolAdmin.id)){
+        rolAdmin = message.guild.roles.cache.find(v=> v.name === "Admin");
+        console.log(message.member.roles.cache.has(rolAdmin.id));
+        if(!message.member.roles.cache.has(rolAdmin.id)){
             return [0,"You are not an admin. Don't try to fool me deceitful gamer !"];
         }
         index = index + 11;
@@ -207,29 +213,29 @@ async function createRoles(me,message){
     let rolCreated = 0
     for(let i=0; i<numberKey-1; i+=1){
         // Create a new role with data and a reason
-        rolCreated = await guild.createRole({
+        rolCreated = await guild.roles.create({data:{
             name: "Keymaster"+String(i+1),
             color: 'BLUE',
             reason: 'we needed a role for Keymasters'
-        })
+        }})
         //.then(addToOne(me,message,i))
         .catch(console.error);
-        me.addRole(rolCreated);
+        me.roles.add(rolCreated);
     }
-    rolCreated = await guild.createRole({
+    rolCreated = await guild.roles.create({data:{
         name: "Keymaster"+String(numberKey),
         color: 'BLUE',
         reason: 'we needed a role for Keymasters'
-    })
+    }})
     //.then(addToOne(me,message,i))
     .catch(console.error);
-    me.addRole(rolCreated).then(message.channel.send("Congratulations you got "+String(numberKey) + " keys !"));
+    me.roles.add(rolCreated).then(message.channel.send("Congratulations you got "+String(numberKey) + " keys !"));
 }
 
 function addToOne(me,message,j){
-    tabRol.push(message.guild.roles.find(v=> v.name === "Keymaster"+String(j+1)))
+    tabRol.push(message.guild.roles.cache.find(v=> v.name === "Keymaster"+String(j+1)))
     //console.log(rol[j])
-    me.addRole(tabRol[j])
+    me.roles.add(tabRol[j])
 }
 
 function getUserId(mess){
